@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Noto Sans JP', 'Hiragino Sans', system-ui, sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  background: #0f172a;
+  color: #f1f5f9;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* スクロールバーを非表示 */
+::-webkit-scrollbar { display: none; }
+
+/* タッチフィードバック */
+.touch-active:active {
+  opacity: 0.7;
+  transform: scale(0.97);
+  transition: all 0.1s ease;
+}
+
+/* ガラス効果 */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ずんだもん吹き出し */
+.speech-bubble {
+  position: relative;
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 12px;
+  padding: 8px 14px;
+}
+
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  bottom: -8px;
+  border-width: 8px 6px 0;
+  border-style: solid;
+  border-color: rgba(74, 222, 128, 0.3) transparent transparent;
+}

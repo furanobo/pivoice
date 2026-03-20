@@ -1,0 +1,80 @@
+# PiVoice 設定ファイル
+# 環境変数が優先されます (ANTHROPIC_API_KEY, OPENWEATHER_API_KEY, HA_TOKEN, HA_HOST)
+
+# ずんだもん TTS (VOICEVOX)
+voicevox:
+  host: localhost
+  port: 50021
+  speaker_id: 3       # ずんだもん ノーマル
+  speed_scale: 1.1
+  intonation_scale: 1.2
+  cache_enabled: true
+  cache_size: 200
+
+# 音声認識 (faster-whisper)
+stt:
+  model: base          # tiny/base/small (Pi5推奨: base)
+  language: ja
+  device: cpu
+  compute_type: int8
+
+# ウェイクワード (openWakeWord)
+wake_word:
+  threshold: 0.5
+  vad_threshold: 0.5
+  silence_duration: 1.5
+
+# AI エンジン
+ai:
+  # Claude API Key は環境変数 ANTHROPIC_API_KEY を使用
+  claude_model: claude-sonnet-4-6
+  ollama_host: localhost
+  ollama_port: 11434
+  ollama_model: llama3.2:3b
+  use_local_fallback: true
+
+# 天気情報
+weather:
+  # API Key は環境変数 OPENWEATHER_API_KEY を使用
+  city: Tokyo
+  units: metric
+  language: ja
+
+# Home Assistant (オプション)
+home_assistant:
+  # host/token は環境変数 HA_HOST/HA_TOKEN を使用
+  enabled: false
+  port: 8123
+
+# Spotify (オプション)
+spotify:
+  enabled: false
+
+# Google Calendar (オプション)
+google_calendar:
+  enabled: false
+  credentials_path: config/google_credentials.json
+
+# ディスプレイ設定
+display:
+  width: 1024
+  height: 600
+  brightness: 80
+  auto_brightness: true
+  night_mode_hour: 22
+  morning_hour: 7
+  show_zundamon: true
+  dark_mode: true
+
+# 音声設定
+audio:
+  # input_device: null  # nullでデフォルト, 番号指定も可能
+  # output_device: null
+  sample_rate: 16000
+  channels: 1
+  volume: 0.8
+
+# サーバー設定
+server_host: "0.0.0.0"
+server_port: 8000
+debug: false

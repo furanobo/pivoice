@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # VOICEVOX エンジン (ずんだもんボイス)
+  voicevox:
+    image: voicevox/voicevox_engine:cpu-ubuntu20.04-latest
+    ports:
+      - "50021:50021"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:50021/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PiVoice バックエンド
+  pivoice:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config:/app/config
+      - ./.cache:/app/.cache
+      - /dev/snd:/dev/snd  # 音声デバイス
+    devices:
+      - /dev/snd:/dev/snd
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+      - HA_HOST=${HA_HOST:-}
+      - HA_TOKEN=${HA_TOKEN:-}
+    depends_on:
+      voicevox:
+        condition: service_healthy
+    restart: unless-stopped
+    privileged: true  # 音声デバイスアクセスに必要

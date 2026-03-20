@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# 環境変数 (絶対にコミットしない!)
+.env
+!.env.example
+
+# キャッシュ
+.cache/
+*.cache
+
+# フロントエンド
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# ログ
+*.log
+
+# macOS
+.DS_Store
+
+# Google API 認証情報
+config/google_credentials.json
+config/token.json
+
+# Live2D モデル (著作権のため)
+public/models/
