@@ -1,50 +1,76 @@
 # PiVoice 設定ファイル
-# 環境変数が優先されます (ANTHROPIC_API_KEY, OPENWEATHER_API_KEY, HA_TOKEN, HA_HOST)
+# ============================================================
+# Proxmox ハイブリッドアーキテクチャ設定
+# ============================================================
+# サーバー側 (Proxmox 192.168.11.48):
+#   CT107: Ollama        → 192.168.100.107  (qwen3.5 + ROCm GPU)
+#   CT117: Node-RED      → 192.168.100.117  (自動化)
+#   CT119: VOICEVOX      → 192.168.100.111  (ずんだもんTTS)
+#   CT120: PiVoice API   → 192.168.100.113  (バックエンド)
+#   VM104: Home Assistant → 192.168.100.104  (スマートホーム)
+#
+# Pi側 (エッジデバイス):
+#   - ウェイクワード検出 (openWakeWord)
+#   - 音声認識 STT (faster-whisper)
+#   - 音声I/O (マイク + スピーカー)
+#   - タッチUI (Chromium kiosk)
+# ============================================================
 
-# ずんだもん TTS (VOICEVOX)
+# 動作モード: "server" (Proxmox上) or "edge" (Pi上)
+mode: server
+
+# ずんだもん TTS (VOICEVOX) - CT119
 voicevox:
-  host: localhost
+  host: 192.168.100.111  # CT119 VOICEVOX
   port: 50021
-  speaker_id: 3       # ずんだもん ノーマル
+  speaker_id: 3           # ずんだもん ノーマル
   speed_scale: 1.1
   intonation_scale: 1.2
   cache_enabled: true
-  cache_size: 200
+  cache_size: 500          # サーバー側なのでキャッシュ大きく
 
-# 音声認識 (faster-whisper)
+# 音声認識 (faster-whisper) - Pi側で動作
 stt:
-  model: base          # tiny/base/small (Pi5推奨: base)
+  model: base              # Pi5: base推奨
   language: ja
   device: cpu
   compute_type: int8
+  # サーバーモードでは Pi から API 経由でテキストが送られる
 
-# ウェイクワード (openWakeWord)
+# ウェイクワード (openWakeWord) - Pi側で動作
 wake_word:
   threshold: 0.5
   vad_threshold: 0.5
   silence_duration: 1.5
 
-# AI エンジン
+# AI エンジン - CT107 Ollama (ROCm GPU + qwen3.5)
 ai:
-  # Claude API Key は環境変数 ANTHROPIC_API_KEY を使用
+  # Claude API Key は環境変数 ANTHROPIC_API_KEY
   claude_model: claude-sonnet-4-6
-  ollama_host: localhost
+  ollama_host: 192.168.100.107  # CT107 Ollama (ROCm GPU加速!)
   ollama_port: 11434
-  ollama_model: qwen2.5:3b   # Qwen2.5-3B が Pi5 で最推奨 (4-7 tok/s, ~3.5GB RAM)
+  ollama_model: qwen3.5:latest  # qwen3.5 (6.6GB, 5.9tok/s with GPU)
   use_local_fallback: true
+
+# Home Assistant - VM104
+home_assistant:
+  host: 192.168.100.104    # VM104 HAOS
+  port: 8123
+  # token は環境変数 HA_TOKEN
+  enabled: true
+
+# Node-RED - CT117
+node_red:
+  host: 192.168.100.117
+  port: 1880
+  enabled: true
 
 # 天気情報
 weather:
-  # API Key は環境変数 OPENWEATHER_API_KEY を使用
+  # API Key は環境変数 OPENWEATHER_API_KEY
   city: Tokyo
   units: metric
   language: ja
-
-# Home Assistant (オプション)
-home_assistant:
-  # host/token は環境変数 HA_HOST/HA_TOKEN を使用
-  enabled: false
-  port: 8123
 
 # Spotify (オプション)
 spotify:
@@ -66,10 +92,8 @@ display:
   show_zundamon: true
   dark_mode: true
 
-# 音声設定
+# 音声設定 (Pi側のみ)
 audio:
-  # input_device: null  # nullでデフォルト, 番号指定も可能
-  # output_device: null
   sample_rate: 16000
   channels: 1
   volume: 0.8
@@ -78,3 +102,8 @@ audio:
 server_host: "0.0.0.0"
 server_port: 8000
 debug: false
+
+# Pi エッジクライアント設定
+edge:
+  server_url: "http://192.168.100.113:8000"  # CT120 PiVoice API
+  ws_url: "ws://192.168.100.113:8000/ws"

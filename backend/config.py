@@ -9,8 +9,22 @@ CONFIG_PATH = Path(__file__).parent.parent / "config" / "pivoice.yaml"
 
 
 @dataclass
+class NodeRedConfig:
+    host: str = "192.168.100.117"
+    port: int = 1880
+    enabled: bool = True
+
+
+@dataclass
+class EdgeConfig:
+    """Pi エッジクライアント設定"""
+    server_url: str = "http://192.168.100.113:8000"
+    ws_url: str = "ws://192.168.100.113:8000/ws"
+
+
+@dataclass
 class VoicevoxConfig:
-    host: str = "localhost"
+    host: str = "192.168.100.111"  # CT119 VOICEVOX
     port: int = 50021
     speaker_id: int = 3  # ずんだもん ノーマル
     speed_scale: float = 1.1
@@ -48,18 +62,18 @@ class WakeWordConfig:
 class AIConfig:
     claude_api_key: str = ""
     claude_model: str = "claude-sonnet-4-6"
-    ollama_host: str = "localhost"
+    ollama_host: str = "192.168.100.107"  # CT107 Ollama (ROCm GPU加速)
     ollama_port: int = 11434
-    ollama_model: str = "qwen2.5:3b"  # Qwen2.5-3B: Pi5で4-7tok/s, 最推奨
+    ollama_model: str = "qwen3.5:latest"  # Proxmox GPU: 5.9tok/s
     use_local_fallback: bool = True
 
 
 @dataclass
 class HomeAssistantConfig:
-    host: str = ""
+    host: str = "192.168.100.104"  # VM104 HAOS
     port: int = 8123
     token: str = ""
-    enabled: bool = False
+    enabled: bool = True
 
 
 @dataclass
@@ -107,16 +121,19 @@ class AudioConfig:
 
 @dataclass
 class PiVoiceConfig:
+    mode: str = "server"  # "server" (Proxmox) or "edge" (Pi standalone)
     voicevox: VoicevoxConfig = field(default_factory=VoicevoxConfig)
     stt: STTConfig = field(default_factory=STTConfig)
     wake_word: WakeWordConfig = field(default_factory=WakeWordConfig)
     ai: AIConfig = field(default_factory=AIConfig)
     home_assistant: HomeAssistantConfig = field(default_factory=HomeAssistantConfig)
+    node_red: NodeRedConfig = field(default_factory=NodeRedConfig)
     weather: WeatherConfig = field(default_factory=WeatherConfig)
     spotify: SpotifyConfig = field(default_factory=SpotifyConfig)
     google_calendar: GoogleCalendarConfig = field(default_factory=GoogleCalendarConfig)
     display: DisplayConfig = field(default_factory=DisplayConfig)
     audio: AudioConfig = field(default_factory=AudioConfig)
+    edge: EdgeConfig = field(default_factory=EdgeConfig)
     server_host: str = "0.0.0.0"
     server_port: int = 8000
     debug: bool = False
