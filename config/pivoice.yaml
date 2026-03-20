@@ -30,7 +30,7 @@ ai:
   claude_model: claude-sonnet-4-6
   ollama_host: localhost
   ollama_port: 11434
-  ollama_model: llama3.2:3b
+  ollama_model: qwen2.5:3b   # Qwen2.5-3B が Pi5 で最推奨 (4-7 tok/s, ~3.5GB RAM)
   use_local_fallback: true
 
 # 天気情報

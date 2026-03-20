@@ -50,7 +50,7 @@ class AIConfig:
     claude_model: str = "claude-sonnet-4-6"
     ollama_host: str = "localhost"
     ollama_port: int = 11434
-    ollama_model: str = "llama3.2:3b"
+    ollama_model: str = "qwen2.5:3b"  # Qwen2.5-3B: Pi5で4-7tok/s, 最推奨
     use_local_fallback: bool = True
 
 
